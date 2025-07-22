@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -36,6 +37,12 @@ public class ProductImplementation implements ProductService{
     }
 	@Override
 	public ProductDTO addProduct(ProductDTO productdto,List<MultipartFile>images) throws IOException {
+		
+		Optional<Product> exist= productRepo.findProductByName(productdto.getName().toLowerCase().trim());
+		if(exist!=null) {
+			throw new ResourceNotFoundException("Product with same name already Exists");
+		}
+		
 		Category c = new Category();
 		c.setId(productdto.getCategoryId());
 		c.setName(productdto.getCategoryName());
